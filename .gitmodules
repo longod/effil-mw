@@ -1,0 +1,6 @@
+[submodule "src/MWSE"]
+	path = src/MWSE
+	url = https://github.com/MWSE/MWSE.git
+[submodule "src/effil"]
+	path = src/effil
+	url = https://github.com/effil/effil.git
