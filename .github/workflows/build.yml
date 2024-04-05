@@ -15,7 +15,7 @@ jobs:
     # https://github.com/marketplace/actions/checkout
     - uses: actions/checkout@v4
       with:
-        submodules: true
+        submodules: recursive
     
       # https://github.com/marketplace/actions/enable-developer-command-prompt
     - uses: ilammy/msvc-dev-cmd@v1.13.0
@@ -24,4 +24,9 @@ jobs:
     - name: Build Lua
       working-directory: ${{github.workspace}}/src/MWSE/deps/LuaJIT/src
       run: ./msvcbuild.bat
-        
+
+    - name: Build Effil
+      working-directory: ${{github.workspace}}/src/effil
+      run: |
+        cmake . -A Win32 -DLUA_INCLUDE_DIR="${{github.workspace}}/src/MWSE/deps/LuaJIT/src" -DLUA_LIBRARY="${{github.workspace}}/src/MWSE/deps/LuaJIT/src/lua*.lib"
+        cmake --build . --target effil --config Release -- -m
