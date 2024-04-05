@@ -5,11 +5,10 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  workflow_dispatch:
+  workflow_dispatch: # manual
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
@@ -17,19 +16,21 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
-        # depth?
+        # I want to retrieve only some files in a submodule and I want to limit the number of recurrences. but how?
 
-      # https://github.com/marketplace/actions/enable-developer-command-prompt
+    # https://github.com/marketplace/actions/enable-developer-command-prompt
     - uses: ilammy/msvc-dev-cmd@v1.13.0
       with:
         arch: x86
 
     # https://github.com/marketplace/actions/cache
-    - uses: actions/cache@v4
+    - name: Cache Lua
+      uses: actions/cache@v4
       id: cache-lua
       with:
         path: ${{github.workspace}}/src/MWSE/deps/LuaJIT/src
-        key: lua-${{ hashFiles('.git\modules\src\MWSE\refs\heads/master') }}
+        key: lua-${{ hashFiles('.git/modules/src/MWSE/refs/heads/master') }}
+        # I don't want to have to calculate a hash from a hash file, but how can I key the contents of the file?
 
     - name: Build Lua
       if: steps.cache-lua.outputs.cache-hit != 'true'
@@ -37,11 +38,15 @@ jobs:
       run: |
         ./msvcbuild.bat
 
-    - uses: actions/cache@v4
+    - name: Cache Effil
+      uses: actions/cache@v4
       id: cache-effil
       with:
-        path: ${{github.workspace}}/src/effil/*.dll
-        key: effil-${{ hashFiles('.git\modules\src\effil\refs\heads\master') }}
+        path: |
+          src/effil/*.dll
+          src/effil/*.pdb
+          src/effil/*.exp
+        key: effil-${{ hashFiles('.git/modules/src/effil/refs/heads/master') }}
 
     - name: Build Effil
       if: steps.cache-effil.outputs.cache-hit != 'true'
@@ -54,6 +59,9 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: bin
-        path: src/effil/*.dll
+        path: |
+          src/effil/*.dll
+          src/effil/*.pdb
+          src/effil/*.exp
         retention-days: 1
 
