@@ -1,0 +1,27 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    # https://github.com/marketplace/actions/checkout
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    
+      # https://github.com/marketplace/actions/enable-developer-command-prompt
+    - uses: ilammy/msvc-dev-cmd@v1.13.0
+      with:
+        arch: x86
+    - name: Build Lua
+      working-directory: ${{github.workspace}}/src/MWSE/deps/LuaJIT/src
+      run: ./msvcbuild.bat
+        
