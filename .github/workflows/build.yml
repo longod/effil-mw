@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -16,17 +17,43 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
-    
+        # depth?
+
       # https://github.com/marketplace/actions/enable-developer-command-prompt
     - uses: ilammy/msvc-dev-cmd@v1.13.0
       with:
         arch: x86
+
+    # https://github.com/marketplace/actions/cache
+    - uses: actions/cache@v4
+      id: cache-lua
+      with:
+        path: ${{github.workspace}}/src/MWSE/deps/LuaJIT/src
+        key: lua-${{ hashFiles('.git\modules\src\MWSE\refs\heads/master') }}
+
     - name: Build Lua
+      if: steps.cache-lua.outputs.cache-hit != 'true'
       working-directory: ${{github.workspace}}/src/MWSE/deps/LuaJIT/src
-      run: ./msvcbuild.bat
+      run: |
+        ./msvcbuild.bat
+
+    - uses: actions/cache@v4
+      id: cache-effil
+      with:
+        path: ${{github.workspace}}/src/effil/*.dll
+        key: effil-${{ hashFiles('.git\modules\src\effil\refs\heads\master') }}
 
     - name: Build Effil
+      if: steps.cache-effil.outputs.cache-hit != 'true'
       working-directory: ${{github.workspace}}/src/effil
       run: |
         cmake . -A Win32 -DLUA_INCLUDE_DIR="${{github.workspace}}/src/MWSE/deps/LuaJIT/src" -DLUA_LIBRARY="${{github.workspace}}/src/MWSE/deps/LuaJIT/src/lua*.lib"
         cmake --build . --target effil --config Release -- -m
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: bin
+        path: src/effil/*.dll
+        retention-days: 1
+
