@@ -11,7 +11,7 @@ local effil = {}
 -- Use effil.table and effil.channel to transmit data over threads. See example of thread usage here.
 -- runner = effil.thread(func)
 -- Creates thread runner. Runner spawns new thread for each invocation.
----@param func fun(...) Lua function
+---@param func fun(...) : ... Lua function
 ---@return Effil.ThreadRunner runner thread runner object to configure and run a new thread
 function effil.thread(func) end
 
@@ -127,9 +127,10 @@ function thread.wait(self, time, metric) end
 
 ---comment
 ---@param self Effil.ThreadHandle
+---@param time number?
 ---@param metric string?
 ---@return boolean result Returns status of thread. The output is the same as thread:status()
-function thread.cancel(self, metric) end
+function thread.cancel(self, time, metric) end
 
 ---comment
 ---@param self Effil.ThreadHandle
@@ -142,7 +143,8 @@ function thread.pause(self, time, metric) end
 ---@param self Effil.ThreadHandle
 function thread.resume(self) end
 
----comment
+
+--- Must be defined as table, but not a regular table
 ---@class Effil.Table
 local tbl = {}
 
