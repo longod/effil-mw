@@ -16,7 +16,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
-        # I want to retrieve only some files in a submodule and I want to limit the number of recurrences. but how?
+        # I want to retrieve only some files in a submodule and I want to limit the number of recurrences, but how?
 
     # https://github.com/marketplace/actions/enable-developer-command-prompt
     - uses: ilammy/msvc-dev-cmd@v1.13.0
@@ -61,7 +61,5 @@ jobs:
         name: bin
         path: |
           src/effil/*.dll
-          src/effil/*.pdb
-          src/effil/*.exp
         retention-days: 1
 
