@@ -46,7 +46,11 @@ unitwind:test("compare_primitives", function()
     }
 
     local result = effil.dump(effil.table(origin))
-    assert(table_equals(origin, result)) -- FIXME
+    local ret, err = table_equals(origin, result)
+    if ret == false then
+        print(err)
+    end
+    unitwind:expect(ret).toBe(true)
 end)
 
 unitwind:test("compare_functions", function()
