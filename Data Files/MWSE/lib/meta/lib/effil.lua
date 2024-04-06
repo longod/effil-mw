@@ -3,7 +3,7 @@
 --- Effil is a multithreading library for Lua. It allows to spawn native threads and safe data exchange. Effil has been designed to provide clear and simple API for lua developers.
 --- https://github.com/effil/effil
 ---@class Effil
----@field G Effil.Table Is a global predefined shared table. This table always present in any thread (any Lua state).
+---@field G table Is a global predefined shared table. This table always present in any thread (any Lua state).
 ---@field gc Effil.GarbageCollector
 local effil = {}
 
@@ -39,38 +39,44 @@ function effil.hardware_threads() end
 function effil.pcall(func, ...) end
 
 ---comment
----@param tbl Effil.Table?
----@return Effil.Table table
+---@param tbl table?
+---@return table
 function effil.table(tbl) end
 
 ---comment
----@param tbl Effil.Table
----@param mtbl table|Effil.Table?
----@return Effil.Table table
+---@param tbl table
+---@param mtbl table?
+---@return table
 function effil.setmetatable(tbl, mtbl) end
 
 ---comment
----@param tbl Effil.Table
----@return table? table
----@return Effil.Table? table
+---@param tbl table
+---@return table?
 function effil.getmetatable(tbl) end
 
 ---comment
----@param tbl Effil.Table
+---@param tbl table
 ---@param key any
 ---@param value any
 function effil.rawset(tbl, key, value) end
 
 ---comment
----@param tbl Effil.Table
+---@param tbl table
 ---@param key any
 ---@return any value
 function effil.rawget(tbl, key) end
 
 ---Truns effil.table into regular Lua table.
----@param tbl Effil.Table
+---@param tbl table
 ---@return table result
 function effil.dump(tbl) end
+
+---@generic K, V
+---@param tbl table<K, V>
+---@param index? K
+---@return K?
+---@return V?
+function effil.next(tbl, index) end
 
 ---comments
 ---@param capacity integer?
@@ -78,7 +84,7 @@ function effil.dump(tbl) end
 function effil.channel(capacity) end
 
 ---comment
----@param obj Effil.Table|Effil.Channel
+---@param obj table|Effil.Channel
 ---@return integer
 function effil.size(obj) end
 
@@ -144,7 +150,7 @@ function thread.pause(self, time, metric) end
 function thread.resume(self) end
 
 
---- Must be defined as table, but not a regular table
+--- TODO Must be defined as table, but not a regular table
 ---@class Effil.Table
 local tbl = {}
 
