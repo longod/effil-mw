@@ -1,0 +1,16 @@
+[package]
+name = "Efiil"
+description = "Provide a multithreading library for MWSE"
+homepage = "https://www.nexusmods.com/morrowind/mods/*****"
+repository = "https://github.com/longod/MWSE-Effil"
+authors = ["longod"]
+version = "1.0.0"
+
+[dependencies]
+assets = [
+    "MWSE/lib/effil.dll",
+    "MWSE/lib/meta/lib/effil",
+]
+
+[dependencies.mwse]
+buildnumber = 3786

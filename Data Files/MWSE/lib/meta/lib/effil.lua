@@ -4,7 +4,7 @@
 ---
 --- https://github.com/effil/effil
 ---@class Effil
----@field G table is a global predefined shared table. This table always present in any thread (any Lua state).
+---@field G Effil.Table is a global predefined shared table. This table always present in any thread (any Lua state).
 ---@field gc Effil.GarbageCollector provides a set of method configure effil garbage collector.
 local effil = {}
 

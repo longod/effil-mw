@@ -1,9 +1,6 @@
 local effil = require("effil")
 local util = require("effil_test.util")
 
--- Do we need to declare a global and assign it to a local as we should?
---local effil = effil
-
 ---@param timeInSec integer?
 ---@param condition any
 ---@param silent boolean?
@@ -12,6 +9,11 @@ local function wait(timeInSec, condition, silent)
     local result = false
     local startTime = os.time()
     while ((os.time() - startTime) <= timeInSec) do
+
+        -- Not only the version used by MWSE, but LuaJIT seems to have a resource leak when frequently accessing data that locks with another thread.
+        -- Even if it does not, or even if it does not leak, such accesses should be avoided.
+        effil.sleep(100, "ms")
+
         if condition ~= nil then
             if type(condition) == 'function' then
                 if condition() then
@@ -168,10 +170,17 @@ unitwind:test("cancel", function()
     unitwind:expect(thread:status()).toBe("cancelled")
 end)
 
--- FIXME Expected value to be true, got: false.
---[[
 unitwind:test("async_cancel", function()
     local thread_runner = effil.thread(
+        jit ~= nil and
+        function()
+            local startTime = os.time()
+            while ((os.time() - startTime) <= 10) do
+                -- In the case of LuaJIT, it seems that if it's a truly busy loop, it can't be interrupted and cancelled.
+                effil.yield()
+            end
+        end
+        or
         function()
             local startTime = os.time()
             while ((os.time() - startTime) <= 10) do
@@ -187,10 +196,7 @@ unitwind:test("async_cancel", function()
     unitwind:expect(wait(2, function() return thread:status() ~= 'running' end)).toBe(true)
     unitwind:expect(thread:status()).toBe('cancelled')
 end)
---]]
 
--- FIXME error gc.count()
---[[
 unitwind:test("pause_resume_cancel", function()
     local data = effil.table()
     data.value = 0
@@ -213,10 +219,7 @@ unitwind:test("pause_resume_cancel", function()
     unitwind:expect(wait(5, function() return (data.value - savedValue) > 100 end)).toBe(true)
     unitwind:expect(thread:cancel()).toBe(true)
 end)
---]]
 
--- FIXME error gc.count()
---[[
 unitwind:test("pause_cancel", function()
     local data = effil.table()
     data.value = 0
@@ -237,10 +240,7 @@ unitwind:test("pause_cancel", function()
 
     unitwind:expect(thread:cancel(1)).toBe(true)
 end)
---]]
 
--- FIXME error gc.count()
---[[
 unitwind:test("async_pause_resume_cancel", function()
     local data = effil.table()
     data.value = 0
@@ -266,7 +266,6 @@ unitwind:test("async_pause_resume_cancel", function()
     unitwind:expect(wait(5, function() return thread:status() == "cancelled" end)).toBe(true)
     thread:wait()
 end)
---]]
 
 unitwind:test("returns", function()
     local share = effil.table()
