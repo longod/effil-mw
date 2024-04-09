@@ -71,7 +71,7 @@ unitwind:test("check_single_upvalue_p (effil.thread)",
 unitwind:test("check_invalid_coroutine", function()
     local obj = coroutine.create(foo)
     local thread_worker = function() return tostring(obj) end
-    local ret, err, a = pcall(effil.thread, thread_worker)
+    local ret, err = pcall(effil.thread, thread_worker)
     if ret then
         err():wait()
     end

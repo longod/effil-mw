@@ -20,10 +20,33 @@ local function tear_down(metatable)
     end
 end
 
+-- Register effil in global for iterators_p
+local registerd = false
+
 local unitwind = require("unitwind").new({
     enabled = true,
     highlight = false,
     afterEach = tear_down,
+    beforeAll = function ()
+        if util.LUA_VERSION > 51 then
+            -- something
+        else
+            if not _G.effil then
+                _G.effil = effil
+                registerd = true
+            end
+        end
+    end,
+    afterAll = function ()
+        if util.LUA_VERSION > 51 then
+            -- something
+        else
+            if registerd then
+                _G.effil = nil
+                registerd = false
+            end
+        end
+    end
 })
 
 unitwind:start("effil metatable")
@@ -165,8 +188,6 @@ local function iterators_p(iterator_type, iterator_trigger)
     unitwind:expect(pow_iter).toBe(2 ^ 11)
 end
 
--- FIXME need global effil
---[[
 unitwind:test("iterators_p(\"pairs\", \"effil\")", function() iterators_p("pairs", "effil") end)
 unitwind:test("iterators_p(\"ipairs\", \"effil\")", function() iterators_p("ipairs", "effil") end)
 
@@ -174,7 +195,6 @@ if util.LUA_VERSION > 51 then
     unitwind:test("iterators_p(\"pairs\", \"_G\")", function() iterators_p("pairs", "_G") end)
     unitwind:test("iterators_p(\"ipairs\", \"_G\")", function() iterators_p("ipairs", "_G") end)
 end -- LUA_VERSION > 51
-]]--
 
 unitwind:test("as_shared_table", function()
     local share = effil.table()
