@@ -24,7 +24,7 @@ end
 local registerd = false
 
 local unitwind = require("unitwind").new({
-    enabled = true,
+    enabled = require("effil_test.config").testMetatable,
     highlight = false,
     afterEach = tear_down,
     beforeAll = function ()

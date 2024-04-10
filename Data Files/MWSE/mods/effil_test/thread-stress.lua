@@ -2,7 +2,7 @@ local effil = require("effil")
 local util = require("effil_test.util")
 
 local unitwind = require("unitwind").new({
-    enabled = util.STRESS > 0,
+    enabled = util.STRESS > 0 and require("effil_test.config").testThreadStress,
     highlight = false,
     afterEach = util.default_tear_down,
 })

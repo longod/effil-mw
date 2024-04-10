@@ -2,9 +2,13 @@ local effil = require("effil")
 local util = require("effil_test.util")
 
 local unitwind = require("unitwind").new({
-    enabled = true,
+    enabled = require("effil_test.config").testTypeMismatch,
     highlight = false,
 })
+
+-- This test on MWSE seems to sometimes cause resource leaks when combined with coroutines or something. coroutines are rarely used in MWSE.
+-- Originally unsupported_type_p was run after input_types_mismatch_p, but running it first seems to stabilize it. Or it can be stabilized by excluding coroutines, etc.
+-- Whatever it is, it is an error test and should not affect the actual use.
 
 unitwind:start("effil type_mismatch")
 
@@ -82,73 +86,6 @@ local function generate_tests()
     thread:wait()
     local lua_thread = coroutine.create(func)
 
-    local all_types = { 22, "s", true, {}, stable, func, thread, effil.channel(), lua_thread }
-
-    for _, type_instance in ipairs(all_types) do
-        local typename = effil.type(type_instance)
-
-        -- effil.getmetatable
-        if typename ~= "effil.table" then
-            unitwind:test("input_types_mismatch_p(1, \"effil.table\", \"getmetatable\", type_instance)",
-                function() input_types_mismatch_p(1, "effil.table", "getmetatable", type_instance) end)
-        end
-
-        -- effil.setmetatable
-        if typename ~= "table" and typename ~= "effil.table" then
-            unitwind:test("input_types_mismatch_p(1, \"table\", \"setmetatable\", type_instance, 44)",
-                function() input_types_mismatch_p(1, "table", "setmetatable", type_instance, 44) end)
-            unitwind:test("input_types_mismatch_p(2, \"table or nil\", \"setmetatable\", {}, type_instance)",
-                function() input_types_mismatch_p(2, "table or nil", "setmetatable", {}, type_instance) end)
-        end
-
-        if typename ~= "effil.table" then
-            -- effil.rawset
-            unitwind:test("input_types_mismatch_p(1, \"effil.table\", \"rawset\", type_instance, 44, 22)",
-                function() input_types_mismatch_p(1, "effil.table", "rawset", type_instance, 44, 22) end)
-            -- effil.rawget
-            unitwind:test("input_types_mismatch_p(1, \"effil.table\", \"rawget\", type_instance, 44)",
-                function() input_types_mismatch_p(1, "effil.table", "rawget", type_instance, 44) end)
-            -- effil.ipairs
-            unitwind:test("input_types_mismatch_p(1, \"effil.table\", \"ipairs\", type_instance)",
-                function() input_types_mismatch_p(1, "effil.table", "ipairs", type_instance) end)
-            -- effil.pairs
-            unitwind:test("input_types_mismatch_p(1, \"effil.table\", \"pairs\", type_instance)",
-                function() input_types_mismatch_p(1, "effil.table", "pairs", type_instance) end)
-        end
-
-        -- effil.thread
-        if typename ~= "function" then
-            unitwind:test("input_types_mismatch_p(1, \"function\", \"thread\", type_instance)",
-                function() input_types_mismatch_p(1, "function", "thread", type_instance) end)
-        end
-
-        -- effil.sleep
-        if typename ~= "number" then
-            unitwind:test("input_types_mismatch_p(1, \"number\", \"sleep\", type_instance, \"s\")",
-                function() input_types_mismatch_p(1, "number", "sleep", type_instance, "s") end)
-        end
-        if typename ~= "string" then
-            unitwind:test("input_types_mismatch_p(2, \"string\", \"sleep\", 1, type_instance)",
-                function() input_types_mismatch_p(2, "string", "sleep", 1, type_instance) end)
-        end
-
-        if typename ~= "number" then
-            -- effil.channel
-            unitwind:test("input_types_mismatch_p(1, \"number\", \"channel\", type_instance)",
-                function() input_types_mismatch_p(1, "number", "channel", type_instance) end)
-
-            --  effil.gc.step
-            unitwind:test("input_types_mismatch_p(1, \"number\", \"gc.step\", type_instance)",
-                function() input_types_mismatch_p(1, "number", "gc.step", type_instance) end)
-        end
-
-        -- effil.dump
-        if typename ~= "table" and typename ~= "effil.table" then
-            unitwind:test("input_types_mismatch_p(1, \"table\", \"dump\", type_instance)",
-                function() input_types_mismatch_p(1, "table", "dump", type_instance) end)
-        end
-    end
-
     -- Below presented tests which support everything except coroutines
 
     -- effil.rawset
@@ -177,13 +114,79 @@ local function generate_tests()
     -- effil.table[key]
     unitwind:test("unsupported_type_p(1, table_get_value_generator, lua_thread)",
         function() unsupported_type_p(1, table_get_value_generator, lua_thread) end)
+
+    local all_types = { 22, "s", true, {}, stable, func, thread, effil.channel(), lua_thread }
+
+    for _, type_instance in ipairs(all_types) do
+        local typename = effil.type(type_instance)
+
+        -- effil.getmetatable
+        if typename ~= "effil.table" then
+            unitwind:test("input_types_mismatch_p(1, \"effil.table\", \"getmetatable\", " .. typename .. ")",
+                function() input_types_mismatch_p(1, "effil.table", "getmetatable", type_instance) end)
+        end
+
+        -- effil.setmetatable
+        if typename ~= "table" and typename ~= "effil.table" then
+            unitwind:test("input_types_mismatch_p(1, \"table\", \"setmetatable\", " .. typename .. ", 44)",
+                function() input_types_mismatch_p(1, "table", "setmetatable", type_instance, 44) end)
+            unitwind:test("input_types_mismatch_p(2, \"table or nil\", \"setmetatable\", {}, " .. typename .. ")",
+                function() input_types_mismatch_p(2, "table or nil", "setmetatable", {}, type_instance) end)
+        end
+
+        if typename ~= "effil.table" then
+            -- effil.rawset
+            unitwind:test("input_types_mismatch_p(1, \"effil.table\", \"rawset\", " .. typename .. ", 44, 22)",
+                function() input_types_mismatch_p(1, "effil.table", "rawset", type_instance, 44, 22) end)
+            -- effil.rawget
+            unitwind:test("input_types_mismatch_p(1, \"effil.table\", \"rawget\", " .. typename .. ", 44)",
+                function() input_types_mismatch_p(1, "effil.table", "rawget", type_instance, 44) end)
+            -- effil.ipairs
+            unitwind:test("input_types_mismatch_p(1, \"effil.table\", \"ipairs\", " .. typename .. ")",
+                function() input_types_mismatch_p(1, "effil.table", "ipairs", type_instance) end)
+            -- effil.pairs
+            unitwind:test("input_types_mismatch_p(1, \"effil.table\", \"pairs\", " .. typename .. ")",
+                function() input_types_mismatch_p(1, "effil.table", "pairs", type_instance) end)
+        end
+
+        -- effil.thread
+        if typename ~= "function" then
+            unitwind:test("input_types_mismatch_p(1, \"function\", \"thread\", " .. typename .. ")",
+                function() input_types_mismatch_p(1, "function", "thread", type_instance) end)
+        end
+
+        -- effil.sleep
+        if typename ~= "number" then
+            unitwind:test("input_types_mismatch_p(1, \"number\", \"sleep\", " .. typename .. ", \"s\")",
+                function() input_types_mismatch_p(1, "number", "sleep", type_instance, "s") end)
+        end
+        if typename ~= "string" then
+            unitwind:test("input_types_mismatch_p(2, \"string\", \"sleep\", 1, " .. typename .. ")",
+                function() input_types_mismatch_p(2, "string", "sleep", 1, type_instance) end)
+        end
+
+        if typename ~= "number" then
+            -- effil.channel
+            unitwind:test("input_types_mismatch_p(1, \"number\", \"channel\", " .. typename .. ")",
+                function() input_types_mismatch_p(1, "number", "channel", type_instance) end)
+
+            --  effil.gc.step
+            unitwind:test("input_types_mismatch_p(1, \"number\", \"gc.step\", " .. typename .. ")",
+                function() input_types_mismatch_p(1, "number", "gc.step", type_instance) end)
+        end
+
+        -- effil.dump
+        if typename ~= "table" and typename ~= "effil.table" then
+            unitwind:test("input_types_mismatch_p(1, \"table\", \"dump\", " .. typename .. ")",
+                function() input_types_mismatch_p(1, "table", "dump", type_instance) end)
+        end
+    end
+
+
 end
 
--- FIXME error gc.count()
---[[
 -- Put it to function to limit the lifetime of objects
 generate_tests()
---]]
 
 unitwind:test("gc_checks_after_tests", function()
     local ret = util.default_tear_down()
