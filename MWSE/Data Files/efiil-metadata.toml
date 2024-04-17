@@ -2,7 +2,7 @@
 name = "Efiil"
 description = "Provide a multithreading library for MWSE"
 homepage = "https://www.nexusmods.com/morrowind/mods/*****"
-repository = "https://github.com/longod/MWSE-Effil"
+repository = "https://github.com/longod/effil-mw"
 authors = ["longod"]
 version = "1.0.0"
 

@@ -2,7 +2,7 @@
 name = "Efiil Test"
 description = "Efiil Testing"
 homepage = "https://www.nexusmods.com/morrowind/mods/*****"
-repository = "https://github.com/longod/MWSE-Effil"
+repository = "https://github.com/longod/effil-mw"
 authors = ["longod"]
 version = "1.0.0"
 
