@@ -56,17 +56,36 @@ jobs:
         cmake . -A Win32 -DLUA_INCLUDE_DIR="${{github.workspace}}/src/MWSE/deps/LuaJIT/src" -DLUA_LIBRARY="${{github.workspace}}/src/MWSE/deps/LuaJIT/src/lua*.lib"
         cmake --build . --target effil --config Release -- -m
 
-    - name: Create MWSE Package
+    - name: Create Lib Package
+      shell: cmd
       run: |
-        copy /v "src\effil\effil.dll" "MWSE\Data Files\MWSE\lib\"
-        copy /v "src\effil\LICENSE" "MWSE\effil-LICENSE"
-        copy "LICENSE" "MWSE\"
-        copy "README.md"  "MWSE\"
+        mkdir effil-mw
+        xcopy "MWSE\Data Files\MWSE\lib\" "effil-mw\Data Files\MWSE\lib\" /s /y /v
+        copy /v "MWSE\Data Files\efiil-metadata.toml" "effil-mw\Data Files"
+        copy /v "src\effil\effil.dll" "effil-mw\Data Files\MWSE\lib"
+        copy /v "src\effil\LICENSE" "effil-mw\effil-LICENSE"
+        copy /v "LICENSE" "effil-mw"
+        copy /v "README.md"  "effil-mw"
 
-    - name: Upload MWSE
+    - name: Create Test Package
+      shell: cmd
+      run: |
+        mkdir effil-mw-test
+        xcopy "MWSE\Data Files\MWSE\mods\effil_test\" "effil-mw-test\Data Files\MWSE\mods\effil_test\" /s /y /v
+        copy /v "MWSE\Data Files\efiil_test-metadata.toml" "effil-mw-test\Data Files"
+
+    - name: Upload effil-mw
       uses: actions/upload-artifact@v4
       with:
-        name: bin
+        name: effil-mw
         path: |
-          MWSE/*
+          effil-mw
+        retention-days: 1
+
+    - name: Upload effil-mw-test
+      uses: actions/upload-artifact@v4
+      with:
+        name: effil-mw-test
+        path: |
+          effil-mw-test
         retention-days: 1
