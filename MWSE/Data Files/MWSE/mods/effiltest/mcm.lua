@@ -1,8 +1,8 @@
 --- @param e modConfigReadyEventData
 local function OnModConfigReady(e)
-    local config = require("effil_test.config")
+    local config = require("effiltest.config")
     local template = mwse.mcm.createTemplate("effil test")
-    template:saveOnClose("effil_test", config)
+    template:saveOnClose("effiltest", config)
     template:register()
 
     ---@param value boolean

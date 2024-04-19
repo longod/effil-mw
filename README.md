@@ -1,9 +1,10 @@
 # Effil-MW
 
-Provide the multithreading library [Effil](https://github.com/effil/effil) for Morrowind.
+Add [Effil](https://github.com/effil/effil), Lua multithreading library to Morrowind.
 
 Currently, it is confirmed to work on [MWSE](https://github.com/MWSE/MWSE).
 
+It has not been confirmed to work on OpenMW, but I guess it is technically possible.
 
 ## Known Issues
 ###  On LuaJIT (Not only in MWSE)

@@ -1,5 +1,5 @@
 local effil = require("effil")
-local util = require("effil_test.util")
+local util = require("effiltest.util")
 
 ---@param timeInSec integer?
 ---@param condition any
@@ -38,7 +38,7 @@ local function sleep(timeInSec, silent)
 end
 
 local unitwind = require("unitwind").new({
-    enabled = require("effil_test.config").testThread,
+    enabled = require("effiltest.config").testThread,
     highlight = false,
     afterEach = util.default_tear_down,
 })
@@ -69,7 +69,7 @@ local function runner_path_check_p(config_key, pkg)
 end
 
 -- It shouldn't be expected to call 'require' in a thread on MWSE or unitwind.
--- unitwind:test("runner_path_check_p(\"path\", \"size\")", function() runner_path_check_p("path", "effil_test.size") end) -- some testing Lua file to import
+-- unitwind:test("runner_path_check_p(\"path\", \"size\")", function() runner_path_check_p("path", "effiltest.size") end) -- some testing Lua file to import
 unitwind:test("runner_path_check_p(\"cpath\", \"effil\")", function() runner_path_check_p("cpath", "effil") end)
 
 unitwind:test("wait", function()

@@ -20,6 +20,6 @@ local defaultConfig = {
 }
 
 ---@type Config
-local config = mwse.loadConfig("effil_test", defaultConfig)
+local config = mwse.loadConfig("effiltest", defaultConfig)
 
 return config

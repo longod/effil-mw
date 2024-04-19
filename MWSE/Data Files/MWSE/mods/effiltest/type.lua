@@ -1,8 +1,8 @@
 local effil = require("effil")
-local util = require("effil_test.util")
+local util = require("effiltest.util")
 
 local unitwind = require("unitwind").new({
-    enabled = require("effil_test.config").testType,
+    enabled = require("effiltest.config").testType,
     highlight = false,
     afterEach = util.default_tear_down,
 })

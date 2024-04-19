@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  workflow_dispatch: # manual
+  # workflow_dispatch: # manual
 
 jobs:
   build:
@@ -56,36 +56,36 @@ jobs:
         cmake . -A Win32 -DLUA_INCLUDE_DIR="${{github.workspace}}/src/MWSE/deps/LuaJIT/src" -DLUA_LIBRARY="${{github.workspace}}/src/MWSE/deps/LuaJIT/src/lua*.lib"
         cmake --build . --target effil --config Release -- -m
 
-    - name: Create Lib Package
+    - name: Create MWSE Package
       shell: cmd
       run: |
-        mkdir effil-mw
-        xcopy "MWSE\Data Files\MWSE\lib\" "effil-mw\Data Files\MWSE\lib\" /s /y /v
-        copy /v "MWSE\Data Files\efiil-metadata.toml" "effil-mw\Data Files"
-        copy /v "src\effil\effil.dll" "effil-mw\Data Files\MWSE\lib"
-        copy /v "src\effil\LICENSE" "effil-mw\effil-LICENSE"
-        copy /v "LICENSE" "effil-mw"
-        copy /v "README.md"  "effil-mw"
+        mkdir effil-mwse
+        xcopy "MWSE\Data Files\MWSE\lib\" "effil-mwse\Data Files\MWSE\lib\" /s /y /v
+        copy /v "MWSE\Data Files\efiil-metadata.toml" "effil-mwse\Data Files"
+        copy /v "src\effil\effil.dll" "effil-mwse\Data Files\MWSE\lib"
+        copy /v "src\effil\LICENSE" "effil-mwse\effil-LICENSE"
+        copy /v "LICENSE" "effil-mwse"
+        copy /v "README.md"  "effil-mwse"
 
-    - name: Create Test Package
+    - name: Create MWSE Test Package
       shell: cmd
       run: |
-        mkdir effil-mw-test
-        xcopy "MWSE\Data Files\MWSE\mods\effil_test\" "effil-mw-test\Data Files\MWSE\mods\effil_test\" /s /y /v
-        copy /v "MWSE\Data Files\efiil_test-metadata.toml" "effil-mw-test\Data Files"
+        mkdir effil-mwse-test
+        xcopy "MWSE\Data Files\MWSE\mods\effiltest\" "effil-mwse-test\Data Files\MWSE\mods\effiltest\" /s /y /v
+        copy /v "MWSE\Data Files\efiiltest-metadata.toml" "effil-mwse-test\Data Files"
 
-    - name: Upload effil-mw
+    - name: Upload effil-mwse
       uses: actions/upload-artifact@v4
       with:
-        name: effil-mw
+        name: effil-mwse
         path: |
-          effil-mw
-        retention-days: 1
+          effil-mwse
+        retention-days: 3
 
-    - name: Upload effil-mw-test
+    - name: Upload effil-mwse-test
       uses: actions/upload-artifact@v4
       with:
-        name: effil-mw-test
+        name: effil-mwse-test
         path: |
-          effil-mw-test
-        retention-days: 1
+          effil-mwse-test
+        retention-days: 3

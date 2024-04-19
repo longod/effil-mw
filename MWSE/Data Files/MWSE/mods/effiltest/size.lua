@@ -1,10 +1,10 @@
 local effil = require("effil")
-local util = require("effil_test.util")
+local util = require("effiltest.util")
 
 -- This test is originally called from a thread test, but since that does not work correctly in MWSE, it is called separately.
 
 local unitwind = require("unitwind").new({
-    enabled = require("effil_test.config").testSize,
+    enabled = require("effiltest.config").testSize,
     highlight = false,
     afterEach = util.default_tear_down, -- Not necessary when calling from thread.lua
 })

@@ -1,5 +1,5 @@
 local effil = require("effil")
-local util = require("effil_test.util")
+local util = require("effiltest.util")
 
 local function tear_down(metatable)
     collectgarbage()
@@ -24,7 +24,7 @@ end
 local registerd = false
 
 local unitwind = require("unitwind").new({
-    enabled = require("effil_test.config").testMetatable,
+    enabled = require("effiltest.config").testMetatable,
     highlight = false,
     afterEach = tear_down,
     beforeAll = function ()
